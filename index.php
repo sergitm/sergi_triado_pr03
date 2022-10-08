@@ -19,13 +19,30 @@ try{
     die();
 }
 
+// Si hi ha un article introduït per POST fem l'insert a la BBDD abans de mostrar els articles
+
+if(!empty($_POST['insertArticle']) && !empty($_POST['article'])){
+    try{
+        $article = $_POST['article'];
+        $query = "INSERT INTO articles (id, article) VALUES (null, :article)";
+
+        $stmt->prepare($query);
+        $stmt->bindParam(':article', $article);
+
+        $insert = ($stmt->execute()) ? true : false;
+    } catch(PDOException $e){
+        echo '<p style="color:red">Hi ha hagut un error amb la petició: ' . $e->getMessage() . '</p>';
+        $insert = false;    
+    }
+}
+
 // Establim el numero de pagina en la que l'usuari es troba.
 # si no troba cap valor, assignem la pagina 1.
 $pagina = (empty($_GET['pagina'])) ? 1 : intval($_GET['pagina']);
 
 // definim quants post per pagina volem carregar.
 
-$post_per_pag = 5;
+$post_per_pag = (!empty($_GET['post_x_pag']) && (intval($_GET['post_x_pag']) > 0)) ? intval($_GET['post_x_pag']) : 5;
 
 // Revisem des de quin article anem a carregar, depenent de la pagina on es trobi l'usuari.
 # Comprovem si la pagina en la que es troba es més gran d'1, sino carreguem des de l'article 0.
@@ -34,7 +51,6 @@ $post_per_pag = 5;
 $primer_article = ($pagina > 1) ? ($pagina - 1) * $post_per_pag : 0;
 
 // Preparem la consulta SQL
-
 $query = "SELECT * FROM articles LIMIT :primer_article, :num_articles";
 
 try {

@@ -18,6 +18,9 @@
 <body>
 	<div class="contenidor">
 		<h1>Articles</h1>
+		<form method="GET" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+			<input type="number" name="post_x_pag" placeholder="Posts per pàgina" min=1 value="<?php echo (!empty($_GET['post_x_pag'])) ? htmlspecialchars(stripslashes(trim($_GET['post_x_pag']))) : '' ?>">
+		</form>
 		<section class="articles"> <!--aqui guardem els articles-->
 			<ul>
 					<?php foreach ($result as $article) { ?>
@@ -25,14 +28,27 @@
 					<?php } ?>
 			</ul>
 		</section>
+		<form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+			<textarea name='article' rows='10' cols='50' placeholder="Escriu un nou article"></textarea><br>
+			<input class="insertar" type="submit" name="insertArticle" value="Publicar">
+			<?php if (isset($insert) && $insert) { ?>
+				<p style="color:red"></p>
+			<?php } ?>
+		</form>
 
 		<section class="paginacio">
 			<ul>
-					<li <?php echo ($pagina === 1) ? "class=disabled" : "" ?>><a href="<?php echo ($pagina !== 1) ? '?pagina=' . $pagina-1 : '#' ?>">&laquo;</a></li> <!-- Decidim quan el botó "Anterior" estarà deshabilitat -->
+					<li <?php echo ($pagina === 1) ? "class=disabled" : "" ?>>
+						<a href="<?php echo ($pagina !== 1) ? '?pagina=' . $pagina-1 . '&post_x_pag=' . $post_per_pag : '#' ?>">&laquo;</a>
+					</li> <!-- Decidim quan el botó "Anterior" estarà deshabilitat -->
 					<?php for ($i=1; $i <= $maxim_pagines; $i++) { ?>
-						<li <?php echo ($i===$pagina) ? "class='active'" : "" ?>><a href="<?php echo '?pagina=' . $i ?>"><?php echo $i ?></a></li>
+						<li <?php echo ($i===$pagina) ? "class=active" : "" ?>>
+							<a href="<?php echo '?pagina=' . $i . '&post_x_pag=' . $post_per_pag ?>"><?php echo $i ?></a>
+						</li>
 					<?php } ?>
-					<li <?php echo ($pagina == $maxim_pagines) ? "class=disabled" : "" ?>><a href="<?php echo ($pagina != $maxim_pagines) ? '?pagina=' . $pagina+1 : '#' ?>">&raquo;</a></li> <!-- Decidim quan el botó "Seguent" estarà deshabilitat -->	
+					<li <?php echo ($pagina == $maxim_pagines) ? "class=disabled" : "" ?>>
+						<a href="<?php echo ($pagina != $maxim_pagines) ? '?pagina=' . $pagina+1 . '&post_x_pag=' . $post_per_pag : '#' ?>">&raquo;</a>
+					</li> <!-- Decidim quan el botó "Seguent" estarà deshabilitat -->	
 			</ul>
 		</section>
 	</div>
