@@ -26,13 +26,13 @@ if(!empty($_POST['insertArticle']) && !empty($_POST['article'])){
         $article = $_POST['article'];
         $query = "INSERT INTO articles (id, article) VALUES (null, :article)";
 
-        $stmt->prepare($query);
+        $stmt = $conn->prepare($query);
         $stmt->bindParam(':article', $article);
 
         $insert = ($stmt->execute()) ? true : false;
     } catch(PDOException $e){
         echo '<p style="color:red">Hi ha hagut un error amb la petició: ' . $e->getMessage() . '</p>';
-        $insert = false;    
+        $insert = false;
     }
 }
 
